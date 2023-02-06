@@ -70,6 +70,10 @@ captures/
 .idea/markdown-navigator-enh.xml
 .idea/markdown-navigator.xml
 .idea/deploymentTargetDropDown.xml
+.idea/codeStyles/codeStyleConfig.xml
+.idea/intellij-sonar-plugin-project.xml
+.idea/sonarIssues.xml
+.idea/sonarlint/
 
 # Keystore files
 *.jks
