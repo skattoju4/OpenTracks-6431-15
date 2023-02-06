@@ -54,7 +54,7 @@ public class StatisticsRecordingFragment extends Fragment {
 
     private StatisticsRecordingBinding viewBinding;
 
-    private UnitSystem unitSystem = UnitSystem.defaultUnitSystem();
+    private UnitSystem unitSystem = PreferencesUtils.getUnitSystem();
 
     private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = (sharedPreferences, key) -> {
         if (PreferencesUtils.isKey(R.string.stats_units_key, key)) {
