@@ -196,10 +196,7 @@ public class StatisticsRecordedFragment extends Fragment {
         }
 
         // Set time and start datetime
-        {
-            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getMovingTime()));
-            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getTotalTime()));
-        }
+        setMovingTimeAndTotalTime(trackStatistics);
 
         SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(preferenceReportSpeed).build(getContext());
         // Set average speed/pace
@@ -246,6 +243,13 @@ public class StatisticsRecordedFragment extends Fragment {
 
             boolean show = altitudeGain_m != null && altitudeLoss_m != null;
             viewBinding.statsAltitudeGroup.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void setMovingTimeAndTotalTime(TrackStatistics trackStatistics) {
+        {
+            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getMovingTime()));
+            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getTotalTime()));
         }
     }
 
