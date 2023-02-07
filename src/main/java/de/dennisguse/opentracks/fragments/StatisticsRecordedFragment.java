@@ -189,10 +189,7 @@ public class StatisticsRecordedFragment extends Fragment {
         SetImageDrawable(track)
 
         // Set time and start datetime
-        {
-            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getMovingTime()));
-            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getTotalTime()));
-        }
+        setMovingTimeAndTotalTime(trackStatistics);
 
         SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(preferenceReportSpeed).build(getContext());
         // Set average speed/pace
@@ -242,6 +239,14 @@ public class StatisticsRecordedFragment extends Fragment {
             viewBinding.statsAltitudeGroup.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
+
+    private void setMovingTimeAndTotalTime(TrackStatistics trackStatistics) {
+        {
+            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getMovingTime()));
+            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getTotalTime()));
+        }
+    }
+
     private void setTotalDistance(TrackStatistics trackStatistics)
     {
         Pair<String, String> parts = DistanceFormatter.Builder()
@@ -251,6 +256,7 @@ public class StatisticsRecordedFragment extends Fragment {
         viewBinding.statsDistanceValue.setText(parts.first);
         viewBinding.statsDistanceUnit.setText(parts.second);
     }
+    
     private void speedset()
     {
         TrackStatistics trackStatistics = track.getTrackStatistics();
@@ -260,6 +266,7 @@ public class StatisticsRecordedFragment extends Fragment {
         viewBinding.statsMovingSpeedValue.setText(parts.first);
         viewBinding.statsMovingSpeedUnit.setText(parts.second);
     }
+    
     private void updateSensorUI() {
         if (sensorStatistics == null) {
             return;
