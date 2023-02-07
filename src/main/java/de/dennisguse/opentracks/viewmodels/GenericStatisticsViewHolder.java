@@ -17,8 +17,22 @@ import de.dennisguse.opentracks.settings.PreferencesUtils;
 import de.dennisguse.opentracks.settings.UnitSystem;
 import de.dennisguse.opentracks.ui.customRecordingLayout.DataField;
 import de.dennisguse.opentracks.util.StringUtils;
+import java.text.DecimalFormat;
 
-public abstract class GenericStatisticsViewHolder extends StatisticViewHolder<StatsGenericItemBinding> {
+public abstract class GenericStatisticsViewHolder extends RecyclerView.ViewHolder {
+    private final TextView paceTextView;
+    private final DecimalFormat paceFormat = new DecimalFormat("0.0");
+    public GenericStatisticsViewHolder(@NonNull View itemView) {
+        super(itemView);
+        paceTextView = itemView.findViewById(R.id.pace_text_view);
+    }
+
+    public void bind(Statistics statistics) {
+        // Other existing code
+
+        double pace = statistics.getDuration() / (statistics.getDistance() / 1000);
+        paceTextView.setText(paceFormat.format(pace) + " min/km");
+    }
 
     @Override
     protected StatsGenericItemBinding createViewBinding(LayoutInflater inflater) {
