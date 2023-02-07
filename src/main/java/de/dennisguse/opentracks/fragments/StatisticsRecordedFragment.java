@@ -115,7 +115,6 @@ public class StatisticsRecordedFragment extends Fragment {
 
         RecyclerView sensorsRecyclerView = viewBinding.statsSensorsRecyclerView;
         sensorsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-//        sensorsRecyclerView.setAdapter(sensorsAdapter);
 
         return viewBinding.getRoot();
     }
@@ -146,8 +145,8 @@ public class StatisticsRecordedFragment extends Fragment {
         if (isResumed()) {
             getActivity().runOnUiThread(() -> {
                 if (isResumed()) {
-                    Track track = contentProviderUtils.getTrack(trackId);
-                    if (track == null) {
+                    Track track1 = contentProviderUtils.getTrack(trackId);
+                    if (track1 == null) {
                         Log.e(TAG, "track cannot be null");
                         getActivity().finish();
                         return;
@@ -177,29 +176,20 @@ public class StatisticsRecordedFragment extends Fragment {
         viewBinding.statsStartDatetimeValue.setText(StringUtils.formatDateTimeWithOffsetIfDifferent(track.getStartTime()));
     }
 
+    private void SetImageDrawable(Track track){
+        String trackIconValue = TrackIconUtils.getIconValue(getContext(), track.getCategory());
+        viewBinding.statsActivityTypeIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), TrackIconUtils.getIconDrawable(trackIconValue)));
+    }
+	
     private void updateUI() {
         TrackStatistics trackStatistics = track.getTrackStatistics();
         // Set total distance
-        {
-            Pair<String, String> parts = DistanceFormatter.Builder()
-                    .setUnit(unitSystem)
-                    .build(getContext()).getDistanceParts(trackStatistics.getTotalDistance());
+        setTotalDistance(trackStatistics);
 
-            viewBinding.statsDistanceValue.setText(parts.first);
-            viewBinding.statsDistanceUnit.setText(parts.second);
-        }
-
-        // Set activity type
-        {
-            String trackIconValue = TrackIconUtils.getIconValue(getContext(), track.getCategory());
-            viewBinding.statsActivityTypeIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), TrackIconUtils.getIconDrawable(trackIconValue)));
-        }
+        SetImageDrawable(track)
 
         // Set time and start datetime
-        {
-            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getMovingTime()));
-            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getTotalTime()));
-        }
+        setMovingTimeAndTotalTime(trackStatistics);
 
         SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(preferenceReportSpeed).build(getContext());
         // Set average speed/pace
@@ -229,6 +219,7 @@ public class StatisticsRecordedFragment extends Fragment {
             viewBinding.statsMovingSpeedUnit.setText(parts.second);
         }
 
+        speedset();
         // Set altitude gain and loss
         {
             Float altitudeGainInMeters = trackStatistics.getTotalAltitudeGain();
@@ -237,18 +228,54 @@ public class StatisticsRecordedFragment extends Fragment {
             Pair<String, String> parts;
 
             parts = StringUtils.getAltitudeParts(getContext(), altitudeGainInMeters, unitSystem);
+
+            Float altitudeGain = trackStatistics.getTotalAltitudeGain();
+            Float altitudeLoss = trackStatistics.getTotalAltitudeLoss();
+
+            Pair<String, String> parts;
+
+            parts = StringUtils.getAltitudeParts(getContext(), altitudeGain, unitSystem);
+
             viewBinding.statsAltitudeGainValue.setText(parts.first);
             viewBinding.statsAltitudeGainUnit.setText(parts.second);
 
-            parts = StringUtils.getAltitudeParts(getContext(), altitudeLoss_m, unitSystem);
+            parts = StringUtils.getAltitudeParts(getContext(), altitudeLoss, unitSystem);
             viewBinding.statsAltitudeLossValue.setText(parts.first);
             viewBinding.statsAltitudeLossUnit.setText(parts.second);
 
             boolean show = altitudeGainInMeters != null && altitudeLoss_m != null;
+            boolean show = altitudeGain != null && altitudeLoss != null;
             viewBinding.statsAltitudeGroup.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
 
+    private void setMovingTimeAndTotalTime(TrackStatistics trackStatistics) {
+        {
+            viewBinding.statsMovingTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getMovingTime()));
+            viewBinding.statsTotalTimeValue.setText(StringUtils.formatElapsedTime(trackStatistics.getTotalTime()));
+        }
+    }
+
+    private void setTotalDistance(TrackStatistics trackStatistics)
+    {
+        Pair<String, String> parts = DistanceFormatter.Builder()
+                .setUnit(unitSystem)
+                .build(getContext()).getDistanceParts(trackStatistics.getTotalDistance());
+
+        viewBinding.statsDistanceValue.setText(parts.first);
+        viewBinding.statsDistanceUnit.setText(parts.second);
+    }
+    
+    private void speedset()
+    {
+        TrackStatistics trackStatistics = track.getTrackStatistics();
+        SpeedFormatter formatter = SpeedFormatter.Builder().setUnit(unitSystem).setReportSpeedOrPace(preferenceReportSpeed).build(getContext());
+        viewBinding.statsMovingSpeedLabel.setText(preferenceReportSpeed ? R.string.stats_average_moving_speed : R.string.stats_average_moving_pace);
+        Pair<String, String> parts = formatter.getSpeedParts(trackStatistics.getAverageMovingSpeed());
+        viewBinding.statsMovingSpeedValue.setText(parts.first);
+        viewBinding.statsMovingSpeedUnit.setText(parts.second);
+    }
+    
     private void updateSensorUI() {
         if (sensorStatistics == null) {
             return;
