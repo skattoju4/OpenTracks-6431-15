@@ -4,11 +4,17 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.0'
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.5.0.2730"
     }
 }
+
+apply plugin: "org.sonarqube"
 
 allprojects {
     repositories {
@@ -64,7 +70,7 @@ android {
 
         buildConfigField "String", "VERSION_NAME_FULL", "\"${getVersionName()}\""
 
-        minSdk 21
+        minSdk 33
         targetSdk 33
 
         testInstrumentationRunner "de.dennisguse.opentracks.TestRunner"
