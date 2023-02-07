@@ -20,6 +20,7 @@ import de.dennisguse.opentracks.util.StringUtils;
 import java.text.DecimalFormat;
 
 public abstract class GenericStatisticsViewHolder extends RecyclerView.ViewHolder {
+    
     private final TextView paceTextView;
     private final DecimalFormat paceFormat = new DecimalFormat("0.0");
     public GenericStatisticsViewHolder(@NonNull View itemView) {
